@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PTwoPartTwo
+{
+    class PartTwo
+    {
+        static void Main(string[] args)
+        {
+            var input = Console.ReadLine().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>();
+
+            while (true)
+            {
+                string[] commands = Console.ReadLine().Trim().Split();
+                var command = commands[0];
+
+                if (command == "end")
+                {
+                    break;
+                }
+
+                Actions(command, commands, input);
+
+            }
+
+            Console.WriteLine($"[{string.Join(", ", input)}]");
+        }
+
+        static void Actions(string command, string[] commands, List<string> input)
+        {
+            if (command == "reverse" || command == "sort")
+            {
+                int count = int.Parse(commands[4]);
+                int start = int.Parse(commands[2]);
+
+                if (start < 0 || start >= input.Count || start + count - 1 >= input.Count || count < 0)
+                {
+                    Console.WriteLine("Invalid input parameters.");
+                    return;
+                }
+
+                if (command == "reverse")
+                {
+                    ReversedString(start, count, input);
+                }
+                else if (command == "sort")
+                {
+                    SortingString(start, count, input);
+                }
+            }
+            else if (command == "rollLeft" || command == "rollRight")
+            {
+                int count = int.Parse(commands[1]);
+
+                if (count < 0)
+                {
+                    Console.WriteLine("Invalid input parameters.");
+                    return;
+                }
+
+                if (command == "rollLeft")
+                {
+                    count = -count;
+                }
+                RollLeftRight(count, input);
+            }
+
+        }
+
+        static void RollLeftRight(int count, List<string> input)
+        {
+
+            var result = new string[input.Count];
+
+
+            for (int j = 0; j < input.Count; j++)
+            {
+                var newIndex = (j + count) % input.Count;
+                if (newIndex < 0)
+                {
+                    newIndex += input.Count;
+                }
+                result[newIndex] = input[j];
+            }
+            for (int i = 0; i < input.Count; i++)
+            {
+                input[i] = result[i];
+            }
+        }
+
+        static void SortingString(int start, int count, List<string> input)
+        {
+            var partForSort = input.Skip(start).Take(count).ToList();
+            partForSort.Sort();
+
+            for (int i = 0; i < partForSort.Count; i++)
+            {
+                input[start] = partForSort[i];
+                start++;
+            }
+        }
+
+        static void ReversedString(int start, int count, List<string> input)
+        {
+            var partForRevers = input.Skip(start).Take(count).ToList();
+            partForRevers.Reverse();
+
+            for (int i = 0; i < partForRevers.Count(); i++)
+            {
+                input[start] = partForRevers[i];
+                start++;
+            }
+        }
+    }
+}
